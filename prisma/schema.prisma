@@ -29,11 +29,11 @@ model User {
 model Post {
   id          Int     @id @default(autoincrement())
   title       String  @db.VarChar(100)
-  content     String @db.Text
+  content     String  @db.Text
   published   Boolean @default(false)
-  user_id     Int    @db.Int
-  created_at  DateTime @default(now()) @db.DateTime
-  updated_at  DateTime @default(now()) @db.DateTime
+  user_id     Int     @db.Int
+  created_at  DateTime @db.DateTime
+  updated_at  DateTime @db.DateTime
   deleted_at  DateTime? @db.DateTime
   
   user User @relation(fields: [user_id], references: [id])

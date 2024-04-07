@@ -34,6 +34,8 @@ export class PostService {
       data: {
         ...createRequest,
         user_id: user.id,
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     });
 
@@ -83,6 +85,7 @@ export class PostService {
       where: {
         id: post.id,
         user_id: post.user_id,
+        updated_at: new Date(),
       },
       data: updateRequest,
     });
