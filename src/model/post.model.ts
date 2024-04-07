@@ -3,6 +3,9 @@ export class PostResponse {
   title: string;
   content: string;
   published?: boolean;
+  created_at: Date;
+  updated_at: Date;
+  deleted_at?: Date;
 }
 
 export class CreatePostRequest {
@@ -19,8 +22,7 @@ export class UpdatePostRequest {
 }
 
 export class SearchPostRequest {
-  title?: string;
-  content?: string;
+  search?: string;
   page: number;
   size: number;
 }

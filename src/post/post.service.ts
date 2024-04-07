@@ -19,7 +19,7 @@ export class PostService {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
     private prismaService: PrismaService,
     private validationService: ValidationService,
-  ) {}
+  ) { }
 
   async create(user: User, request: CreatePostRequest): Promise<PostResponse> {
     this.logger.debug(
@@ -42,10 +42,13 @@ export class PostService {
 
   toPostResponse(post: Post): PostResponse {
     return {
+      id: post.id,
       title: post.title,
       content: post.content,
       published: post.published,
-      id: post.id,
+      created_at: post.created_at,
+      updated_at: post.updated_at,
+      deleted_at: post.deleted_at,
     };
   }
 
@@ -111,21 +114,20 @@ export class PostService {
 
     const filters = [];
 
-    if (searchRequest.title) {
-      // add title filter
+    if (searchRequest.search) {
       filters.push({
-        title: {
-          contains: searchRequest.title,
-        },
-      });
-    }
-
-    if (searchRequest.content) {
-      // add content filter
-      filters.push({
-        content: {
-          contains: searchRequest.content,
-        },
+        OR: [
+          {
+            title: {
+              contains: searchRequest.search,
+            },
+          },
+          {
+            content: {
+              contains: searchRequest.search,
+            },
+          },
+        ],
       });
     }
 

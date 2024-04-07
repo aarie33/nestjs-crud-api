@@ -15,8 +15,7 @@ export class PostValidation {
   });
 
   static readonly SEARCH: ZodType = z.object({
-    title: z.string().min(1).max(100).optional(),
-    content: z.string().min(1).max(10000).optional(),
+    search: z.string().max(100).optional(),
     page: z.number().min(1).positive(),
     size: z.number().min(1).max(100).positive(),
   });

@@ -1,0 +1,18 @@
+{
+    "javascript.validate.enable": true,
+    "eslint.format.enable": false,
+    "eslint.run": "onType", // The time to run the linter, onSave (after saving) or onType (when inputting), the default is onType
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
+    "editor.wordWrap": "on",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+  
+    // Path to a .prettierignore or similar file
+    "prettier.ignorePath": ".prettierignore",
+    "javascript.format.enable": false
+  }
+  

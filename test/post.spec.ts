@@ -214,7 +214,7 @@ describe('UserController', () => {
       const response = await request(app.getHttpServer())
         .get(`/api/posts`)
         .query({
-          title: 'es',
+          search: 'es',
         })
         .set('Authorization', 'test');
 
@@ -228,7 +228,7 @@ describe('UserController', () => {
       const response = await request(app.getHttpServer())
         .get(`/api/posts`)
         .query({
-          title: 'wrong',
+          search: 'wrong',
         })
         .set('Authorization', 'test');
 
@@ -242,7 +242,7 @@ describe('UserController', () => {
       const response = await request(app.getHttpServer())
         .get(`/api/posts`)
         .query({
-          content: 'es',
+          search: 'es',
         })
         .set('Authorization', 'test');
 
@@ -256,7 +256,7 @@ describe('UserController', () => {
       const response = await request(app.getHttpServer())
         .get(`/api/posts`)
         .query({
-          content: 'wrong',
+          search: 'wrong',
         })
         .set('Authorization', 'test');
 

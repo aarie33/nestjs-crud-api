@@ -79,14 +79,12 @@ export class PostController {
   @HttpCode(200)
   async search(
     @Auth() user: User,
-    @Query('title') title?: string,
-    @Query('content') content?: string,
+    @Query('search') search?: string,
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('size', new ParseIntPipe({ optional: true })) size?: number,
   ): Promise<WebResponse<PostResponse[]>> {
     const request: SearchPostRequest = {
-      title: title,
-      content: content,
+      search: search,
       page: page || 1,
       size: size || 10,
     };
