@@ -84,7 +84,7 @@ export class PostService {
     post = await this.prismaService.post.update({
       where: {
         id: post.id,
-        user_id: post.user_id,
+        user_id: user.id,
         updated_at: new Date(),
       },
       data: updateRequest,
