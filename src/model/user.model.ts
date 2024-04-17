@@ -6,10 +6,14 @@ export class RegisterUserRequest {
 }
 
 export class UserResponse {
+  id: number;
   email: string;
   name: string;
   avatar?: string;
   token?: string;
+  created_at: Date;
+  updated_at: Date;
+  deleted_at?: Date;
 }
 
 export class LoginUserRequest {

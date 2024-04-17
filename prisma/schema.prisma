@@ -20,6 +20,9 @@ model User {
   name      String  @db.VarChar(100)
   avatar    String? @db.VarChar(100)
   token     String? @db.VarChar(100)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  deleted_at  DateTime? @db.DateTime
 
   posts   Post[]
 
@@ -37,5 +40,18 @@ model Post {
   deleted_at  DateTime? @db.DateTime
   
   user User @relation(fields: [user_id], references: [id])
+  comments Comment[]
   @@map("posts")
+}
+
+model Comment {
+  id          Int     @id @default(autoincrement())
+  content     String  @db.Text
+  post_id     Int     @db.Int
+  created_at  DateTime @db.DateTime
+  updated_at  DateTime @db.DateTime
+  deleted_at  DateTime? @db.DateTime
+
+  post Post @relation(fields: [post_id], references: [id])
+  @@map("comments")
 }

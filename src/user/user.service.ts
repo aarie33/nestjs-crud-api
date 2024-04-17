@@ -20,18 +20,19 @@ export class UserService {
     private validationService: ValidationService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
     private prismaService: PrismaService,
-  ) {}
+  ) { }
 
   async register(request: RegisterUserRequest): Promise<UserResponse> {
     this.logger.debug(`Register new user ${JSON.stringify(request)}`);
     const registerRequest: RegisterUserRequest =
       this.validationService.validate(UserValidation.REGISTER, request);
 
-    const totalUserWithSameUsername = await this.prismaService.user.count({
-      where: {
-        email: registerRequest.email,
-      },
-    });
+    const totalUserWithSameUsername =
+      await this.prismaService.client.user.count({
+        where: {
+          email: registerRequest.email,
+        },
+      });
 
     if (totalUserWithSameUsername != 0) {
       throw new HttpException('Username already exists', 400);
@@ -39,15 +40,11 @@ export class UserService {
 
     registerRequest.password = await bcrypt.hash(registerRequest.password, 10);
 
-    const user = await this.prismaService.user.create({
+    const user = await this.prismaService.client.user.create({
       data: registerRequest,
     });
 
-    return {
-      email: user.email,
-      name: user.name,
-      avatar: user.avatar,
-    };
+    return this.toUserResponse(user);
   }
 
   async login(request: LoginUserRequest): Promise<UserResponse> {
@@ -57,7 +54,7 @@ export class UserService {
       request,
     );
 
-    let user = await this.prismaService.user.findFirst({
+    let user = await this.prismaService.client.user.findFirst({
       where: {
         email: loginRequest.email,
       },
@@ -76,7 +73,7 @@ export class UserService {
       throw new HttpException('Username or password is invalid', 401);
     }
 
-    user = await this.prismaService.user.update({
+    user = await this.prismaService.client.user.update({
       where: {
         id: user.id,
       },
@@ -85,18 +82,11 @@ export class UserService {
       },
     });
 
-    return {
-      email: user.email,
-      name: user.name,
-      token: user.token,
-    };
+    return this.toUserResponse(user);
   }
 
   async get(user: User): Promise<UserResponse> {
-    return {
-      email: user.email,
-      name: user.name,
-    };
+    return this.toUserResponse(user);
   }
 
   async update(user: User, request: UpdateUserRequest): Promise<UserResponse> {
@@ -117,21 +107,18 @@ export class UserService {
       user.password = await bcrypt.hash(updateRequest.password, 10);
     }
 
-    const result = await this.prismaService.user.update({
+    const result = await this.prismaService.client.user.update({
       where: {
         id: user.id,
       },
       data: user,
     });
 
-    return {
-      name: result.name,
-      email: result.email,
-    };
+    return this.toUserResponse(result);
   }
 
   async logout(user: User): Promise<UserResponse> {
-    const result = await this.prismaService.user.update({
+    const result = await this.prismaService.client.user.update({
       where: {
         id: user.id,
       },
@@ -140,9 +127,19 @@ export class UserService {
       },
     });
 
+    return this.toUserResponse(result);
+  }
+
+  toUserResponse(user: User): UserResponse {
     return {
-      email: result.email,
-      name: result.name,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      token: user.token,
+      avatar: user.avatar,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+      deleted_at: user.deleted_at,
     };
   }
 }

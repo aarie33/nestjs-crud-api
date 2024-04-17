@@ -30,7 +30,7 @@ export class PostService {
       request,
     );
 
-    const post = await this.prismaService.post.create({
+    const post = await this.prismaService.client.post.create({
       data: {
         ...createRequest,
         user_id: user.id,
@@ -55,7 +55,7 @@ export class PostService {
   }
 
   async checkPostMustExists(userId: number, postId: number): Promise<Post> {
-    const post = await this.prismaService.post.findFirst({
+    const post = await this.prismaService.client.post.findFirst({
       where: {
         user_id: userId,
         id: postId,
@@ -81,7 +81,7 @@ export class PostService {
     );
     let post = await this.checkPostMustExists(user.id, updateRequest.id);
 
-    post = await this.prismaService.post.update({
+    post = await this.prismaService.client.post.update({
       where: {
         id: post.id,
         user_id: post.user_id,
@@ -98,11 +98,9 @@ export class PostService {
   async remove(user: User, postId: number): Promise<PostResponse> {
     await this.checkPostMustExists(user.id, postId);
 
-    const post = await this.prismaService.post.delete({
-      where: {
-        id: postId,
-        user_id: user.id,
-      },
+    const post = await this.prismaService.client.post.delete({
+      id: postId,
+      user_id: user.id,
     });
 
     return this.toPostResponse(post);
@@ -138,7 +136,7 @@ export class PostService {
 
     const skip = (searchRequest.page - 1) * searchRequest.size;
 
-    const posts = await this.prismaService.post.findMany({
+    const posts = await this.prismaService.client.post.findMany({
       where: {
         user_id: user.id,
         AND: filters,
@@ -147,7 +145,7 @@ export class PostService {
       skip: skip,
     });
 
-    const total = await this.prismaService.post.count({
+    const total = await this.prismaService.client.post.count({
       where: {
         user_id: user.id,
         AND: filters,
