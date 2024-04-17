@@ -54,10 +54,12 @@ export class PostService {
     };
   }
 
-  async checkPostMustExists(userId: number, postId: number): Promise<Post> {
+  async checkPostMustExists(postId: number, userId?: number): Promise<Post> {
+    const whereUser = userId ? { user_id: userId } : null;
+
     const post = await this.prismaService.client.post.findFirst({
       where: {
-        user_id: userId,
+        ...whereUser,
         id: postId,
       },
     });
@@ -69,8 +71,8 @@ export class PostService {
     return post;
   }
 
-  async get(user: User, postId: number): Promise<PostResponse> {
-    const post = await this.checkPostMustExists(user.id, postId);
+  async get(postId: number): Promise<PostResponse> {
+    const post = await this.checkPostMustExists(postId);
     return this.toPostResponse(post);
   }
 
@@ -79,7 +81,7 @@ export class PostService {
       PostValidation.UPDATE,
       request,
     );
-    let post = await this.checkPostMustExists(user.id, updateRequest.id);
+    let post = await this.checkPostMustExists(updateRequest.id, user.id);
 
     post = await this.prismaService.client.post.update({
       where: {
@@ -96,7 +98,7 @@ export class PostService {
   }
 
   async remove(user: User, postId: number): Promise<PostResponse> {
-    await this.checkPostMustExists(user.id, postId);
+    await this.checkPostMustExists(postId, user.id);
 
     const post = await this.prismaService.client.post.delete({
       id: postId,
@@ -107,7 +109,6 @@ export class PostService {
   }
 
   async search(
-    user: User,
     request: SearchPostRequest,
   ): Promise<WebResponse<PostResponse[]>> {
     const searchRequest: SearchPostRequest = this.validationService.validate(
@@ -138,7 +139,6 @@ export class PostService {
 
     const posts = await this.prismaService.client.post.findMany({
       where: {
-        user_id: user.id,
         AND: filters,
       },
       take: searchRequest.size,
@@ -147,7 +147,6 @@ export class PostService {
 
     const total = await this.prismaService.client.post.count({
       where: {
-        user_id: user.id,
         AND: filters,
       },
     });

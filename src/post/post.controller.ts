@@ -23,7 +23,7 @@ import { WebResponse } from '../model/web.model';
 
 @Controller('/api/posts')
 export class PostController {
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService) { }
 
   @Post()
   @HttpCode(200)
@@ -40,10 +40,9 @@ export class PostController {
   @Get('/:postId')
   @HttpCode(200)
   async get(
-    @Auth() user: User,
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<WebResponse<PostResponse>> {
-    const result = await this.postService.get(user, postId);
+    const result = await this.postService.get(postId);
     return {
       data: result,
     };
@@ -78,7 +77,6 @@ export class PostController {
   @Get()
   @HttpCode(200)
   async search(
-    @Auth() user: User,
     @Query('search') search?: string,
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('size', new ParseIntPipe({ optional: true })) size?: number,
@@ -88,6 +86,6 @@ export class PostController {
       page: page || 1,
       size: size || 10,
     };
-    return this.postService.search(user, request);
+    return this.postService.search(request);
   }
 }
